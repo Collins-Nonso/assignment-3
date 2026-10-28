@@ -1,0 +1,44 @@
+name: Bash Diagnostic CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Bash permissions
+        run: chmod +x app/*.sh scripts/*.sh tests/*.sh grade.sh
+      - name: Lint and syntax validation
+        run: ./scripts/lint.sh
+
+  test:
+    name: Run application tests
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set executable permissions
+        run: chmod +x app/*.sh scripts/*.sh tests/*.sh grade.sh
+      - name: Run tests
+        run: ./tests/test.sh
+
+  docker:
+    name: Build and smoke-test Docker image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set executable permissions
+        run: chmod +x app/*.sh scripts/*.sh tests/*.sh grade.sh
+      - name: Build and smoke-test image
+        run: ./scripts/build.sh
