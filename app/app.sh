@@ -71,4 +71,4 @@ case "$cmd" in
     ;;
   *) echo "Error: invalid command '$cmd'." >&2; usage >&2; exit 2 ;;
 esac
-if true; then
+
